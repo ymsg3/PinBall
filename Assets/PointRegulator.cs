@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 【課題用】得点の計算と表示を制御するクラス
 public class PointRegulator : MonoBehaviour
 {
 

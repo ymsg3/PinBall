@@ -25,7 +25,7 @@ public class BallController : MonoBehaviour
         if (this.transform.position.z < this.visiblePosZ)
         {
             // GameoverTextにゲームオーバーを表示
-            this.gameoverText.GetComponent<Text> ().text = "Game★Over";
+            this.gameoverText.GetComponent<Text> ().text = "Game ★ Over";
         }
     }
 }
