@@ -13,7 +13,7 @@ public class FripperController : MonoBehaviour
     // 弾いた時の傾き
     private float flickAngle = -20;
 
-    // 前回のタッチの履歴
+    // 前回のタッチ数の履歴
     private int leftPreCnt;
     private int rightPreCnt;
 
@@ -25,11 +25,6 @@ public class FripperController : MonoBehaviour
 
         // フリッパーの傾きを設定
         SetAngle (this.defaultAngle);
-
-        // タッチ履歴を0に初期化
-        leftPreCnt = 0;
-        rightPreCnt = 0;
-
     }
 
     // Update is called once per frame
@@ -37,17 +32,18 @@ public class FripperController : MonoBehaviour
     {
         // 【発展課題】タッチ操作に対応するための処理を追記
 
+
+        // １、タッチ状態によって、フリッパーを動かすかどうか判定
+
         // タッチ情報を取得
         Touch[] touches = Input.touches;
 
-        // 左側のEndedの数
+        // 左右のEndedの数
         int leftEndedCnt = 0;
-        // 右側のEndedの数
         int rightEndedCnt = 0;
 
-        // 左側にタッチがあるかどうか
+        // 左右にタッチがあるかどうか
         bool[] isLeftTouches = new bool[touches.Length];
-        // 右側にタッチがあるかどうか
         bool[] isRightTouches = new bool[touches.Length];
 
         // すべての指のタッチ状態をチェック
@@ -62,13 +58,14 @@ public class FripperController : MonoBehaviour
             rightEndedCnt += isRightTouches[i] && touches[i].phase == TouchPhase.Ended ? 1 : 0;
         }
 
-        // 複数の指でタッチされた場合の対応
 
-        // Endedの数を調べ、左右の離されたタッチが最後の１本かどうかをチェック
+        // ２、複数の指でタッチされた場合の対応
+
+        // 今回、最後の指のタッチか離された時かどうかを左右それぞれチェック
         bool isLeftEnded = leftEndedCnt == 1;
         bool isRightEnded = rightEndedCnt == 1;
 
-        // 左右の今回のタッチ数
+        // 今回のタッチ数をカウントして代入
         int leftCnt = 0;
         int rightCnt = 0;
 
@@ -82,22 +79,26 @@ public class FripperController : MonoBehaviour
             rightCnt += isRightTouches[i] ? 1 : 0;
         }
 
-        // Movedで反対側に移動されるとEndedが検出できない場合の対応
+
+        // ３、タッチしたまま反対側に移動されるとEndedが検出できない問題への対応
 
         // 前回と今回のタッチ数を比較
-        // タッチが左右反対側へすべて移動した場合、Endedのフラグをtrueにする
-        if (leftPreCnt != leftCnt && leftCnt == 0)
+        // タッチが左右の反対側へすべて移動した場合、Endedのフラグをtrueにする
+        if (this.leftPreCnt != leftCnt && leftCnt == 0)
         {
             isLeftEnded = true;
         }
-        if (rightPreCnt != rightCnt && rightCnt == 0)
+        if (this.rightPreCnt != rightCnt && rightCnt == 0)
         {
             isRightEnded = true;
         }
 
-        // 今回の左右のタッチ数を記録
-        leftPreCnt = leftCnt;
-        rightPreCnt = rightCnt;
+        // 次回の判定用に、今回の左右のタッチ数を記録
+        this.leftPreCnt = leftCnt;
+        this.rightPreCnt = rightCnt;
+
+
+        // ４、フリッパーの操作
 
         // 左矢印キーを押した時、または左側のタッチがある時、左フリッパーを動かす
         if (tag == "LeftFripperTag" && (Input.GetKeyDown (KeyCode.LeftArrow) || leftCnt > 0))
